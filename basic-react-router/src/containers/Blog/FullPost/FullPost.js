@@ -1,57 +1,55 @@
-import React, { Component } from "react";
-import axios from "axios";
-
-import "./FullPost.css";
+import React, { useState, useEffect } from "react";
+import axios from "../../../axios";
 import { useParams } from "react-router-dom";
 
-class FullPost extends Component {
-  state = {
-    loadedPost: null,
-    error: false,
+import "./FullPost.css";
+
+function FullPost() {
+  const [loadedPost, setLoadedPost] = useState(null);
+  const [error, setError] = useState(false);
+
+  const { id } = useParams(); // Access route parameter 'id'
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    console.log(id);
+    // Fetch the post data based on the 'id' route parameter
+    axios.get(`/posts/${id}`)
+      .then((response) => {
+        setLoadedPost(response.data);
+      })
+      .catch(() => {
+        setError(true);
+      });
+  }, [id]);
+
+  const deletePostHandler = () => {
+    if (id) {
+      axios.delete(`/posts/${id}`)
+        .then((response) => console.log(response));
+    }
   };
-  componentDidUpdate(prevProps) {
-    // Access the id from the URL using this.props.match.params.id
-    const id = this.props.match.params.id;
 
-    if (id !== prevProps.match.params.id) {
-      if (!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== id)) {
-        axios
-          .get(`/posts/${id}`)
-          .then((response) => {
-            this.setState({ loadedPost: response.data });
-          })
-          .catch(() => this.setState({ error: true }));
-      }
-    }
+  let post = <p style={{ textAlign: "center" }}>Please select a Post!</p>;
+  if (id) {
+    post = <p style={{ textAlign: "center" }}>Loading...!</p>;
   }
-
-  componentDidMount(){
-    console.log(this.props);
-  }
-  deletePostHandler = () => {
-    axios.delete(`/posts/${this.props.id}`)
-    .then(response => console.log(response));
-  }
-  render() {
-
-    let post = <p style={{ textAlign: "center" }}>Please select a Post!</p>;
-    if (this.props.id) {
-      post = <p style={{ textAlign: "center" }}>Loading...!</p>;
-    }
-    if (this.state.loadedPost) {
-      post = (
-        <div className="FullPost">
-          <h1>{this.state.loadedPost.title}</h1>
-          <p>{this.state.loadedPost.body}</p>{" "}
-          <div className="Edit">
-            <button onClick={this.deletePostHandler} className="Delete">Delete</button>
-          </div>
+  if (loadedPost) {
+    post = (
+      <div className="FullPost">
+        <h1>{loadedPost.title}</h1>
+        <p>{loadedPost.body}</p>{" "}
+        <div className="Edit">
+          <button onClick={deletePostHandler} className="Delete">Delete</button>
         </div>
-      );
-    }
-
-    return post;
+      </div>
+    );
   }
+
+  return post;
 }
 
 export default FullPost;

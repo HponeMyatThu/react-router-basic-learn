@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-do
 import Posts from "./Posts/Posts";
 import NewPost from "./NewPost/NewPost";
 import "./Blog.css";
-import FullPost from './FullPost/FullPost';
+import FullPost from "./FullPost/FullPost";
 
 function Blog() {
   return (
@@ -12,9 +12,7 @@ function Blog() {
           <nav>
             <ul>
               <li>
-                <NavLink to="/" >
-                  Home
-                </NavLink>
+                <NavLink to="/">Home</NavLink>
               </li>
               <li>
                 <NavLink
@@ -31,9 +29,9 @@ function Blog() {
           </nav>
         </header>
         <Routes>
-          <Route path="/" exact Component={Posts} />
-          <Route path="/new-post" Component={NewPost} />
-          <Route path="/:id" Component={FullPost} />
+          <Route path="/" element={<Posts />} />
+          <Route path="/new-post" element={<NewPost />} />
+          <Route path="/:id" element={<FullPost />} />
         </Routes>
       </div>
   );
